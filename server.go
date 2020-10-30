@@ -1,6 +1,7 @@
 package main
 
 import (
+	"graphServer/auth"
 	"graphServer/graph"
 	"graphServer/graph/generated"
 	"log"
@@ -11,6 +12,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/go-chi/chi"
 )
 
 const defaultPort = "8080"
@@ -21,9 +23,10 @@ func main() {
 		port = defaultPort
 	}
 
-	// router := chi.NewRouter()
+	router := chi.NewRouter()
+	router.Use(auth.Middleware())
 	mydatabase.InitDB()
-	//mydatabase.Migrate()
+	mydatabase.Migrate()
 
 	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
 
